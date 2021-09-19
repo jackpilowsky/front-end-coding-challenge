@@ -23,13 +23,14 @@ export default class TagBrowserWidget {
     // find and store other elements you need
     this.matchingItemsList = this.config.element.querySelectorAll('.matching-items-list')[0]
     this.selectedItem = this.config.element.querySelectorAll('.selected-item')[0]
+    this.clearButton = this.config.element.querySelectorAll('.clear-button')[0]
   }
 
   bindEventListeners() {
     this.tagList.addEventListener('click', this.tagListClicked.bind(this));
     // bind the additional event listener for clicking on a series title
     this.matchingItemsList.addEventListener('click', this.matchingItemsListClicked.bind(this))
-
+    this.clearButton.addEventListener('click', this.clearButtonClicked.bind(this))
   }
 
   renderTagList() {
@@ -100,5 +101,13 @@ export default class TagBrowserWidget {
     list[3].querySelector('span').innerHTML = ''
     list[4].querySelector('span').innerHTML = ''
     list[5].querySelector('span').innerHTML = ''
+  }
+  clearButtonClicked(event){
+    // re-render the tags list
+    this.renderTagList()
+    // empty the matching items list
+    this.matchingItemsList.innerHTML = ''
+    // clear the selected item
+    this.clearSelectiedItem();
   }
 }
