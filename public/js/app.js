@@ -22,11 +22,14 @@ export default class TagBrowserWidget {
     this.tagList = this.config.element.querySelectorAll('.tag-list')[0];
     // find and store other elements you need
     this.matchingItemsList = this.config.element.querySelectorAll('.matching-items-list')[0]
+    this.selectedItem = this.config.element.querySelectorAll('.selected-item')[0]
   }
 
   bindEventListeners() {
     this.tagList.addEventListener('click', this.tagListClicked.bind(this));
     // bind the additional event listener for clicking on a series title
+    this.matchingItemsList.addEventListener('click', this.matchingItemsListClicked.bind(this))
+
   }
 
   renderTagList() {
@@ -47,6 +50,8 @@ export default class TagBrowserWidget {
     const matchingBooks = this.data.filter(book=>{
       return book.tags.find(bookTag =>bookTag.toLowerCase() === tag.toLowerCase())
     })
+    // clear previous selected item
+    this.clearSelectiedItem()
     // update the active class
     const active = this.tagList.querySelectorAll('.active')
     if(active.length > 0){
@@ -59,5 +64,41 @@ export default class TagBrowserWidget {
     // render list title
     const subtitle = this.matchingItemsList.previousElementSibling;
     subtitle.innerHTML = tag
+  }
+
+  matchingItemsListClicked(event){
+    const title = event.target.innerHTML
+    const book = this.data.find(book=>book.title === title)
+    // update the active class
+    const active = this.matchingItemsList.querySelectorAll('.active')
+    if(active.length > 0){
+      active.forEach(li => li.classList.remove('active'))
+    }
+    event.target.classList.add('active')
+
+    // Update all the things (Templating engine would make this a lot nicer)
+    this.selectedItem.querySelector('.subtitle').innerHTML = book.title;
+    this.selectedItem.querySelector('img').src = book.image;
+    this.selectedItem.querySelector('p').innerHTML = book.description
+    const list = this.selectedItem.querySelectorAll('ul li')
+    list[0].querySelector('span').innerHTML = book.pages
+    list[1].querySelector('span').innerHTML = book.release_date
+    list[2].querySelector('span').innerHTML = book.authors.join(', ')
+    list[3].querySelector('span').innerHTML = book.issue_number
+    list[4].querySelector('span').innerHTML = book.age_rating
+    list[5].querySelector('span').innerHTML = book.series_title
+  }
+
+  clearSelectiedItem(){
+    this.selectedItem.querySelector('.subtitle').innerHTML = ''
+    this.selectedItem.querySelector('img').src = 'http://via.placeholder.com/235x360';
+    this.selectedItem.querySelector('p').innerHTML = ''
+    const list = this.selectedItem.querySelectorAll('ul li')
+    list[0].querySelector('span').innerHTML = ''
+    list[1].querySelector('span').innerHTML = ''
+    list[2].querySelector('span').innerHTML = ''
+    list[3].querySelector('span').innerHTML = ''
+    list[4].querySelector('span').innerHTML = ''
+    list[5].querySelector('span').innerHTML = ''
   }
 }
